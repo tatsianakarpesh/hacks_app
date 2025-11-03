@@ -1,0 +1,33 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Cars" %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <h1>Cars</h1>
+  <div class="search-form" style="flex: 0 1 300px;">
+    <%= form_tag cars_path, method: :get, class: "d-flex" do %>
+      <%= text_field_tag :search, params[:search], class: "form-control me-2", placeholder: "Search cars..." %>
+      <%= submit_tag "Search", class: "btn btn-outline-primary" %>
+    <% end %>
+  </div>
+</div>
+
+<div id="cars" style="display: flex; flex-wrap: wrap; gap: 24px;">
+  <% @cars.each do |car| %>
+    <div style="flex: 0 1 300px; border: 1px solid #ccc; border-radius: 8px; padding: 16px; background: #fafafa; box-shadow: 0 2px 8px #eee;">
+      <%= render car %>
+      <p style="margin-top: 8px;">
+        <%= link_to "Show details", car, class: "btn btn-primary" %>
+      </p>
+      <%= button_to "Add to Cart", cart_items_path(car_id: car.id), method: :post, class: "btn btn-success", form: { style: 'margin-top: 8px;' } %>
+    </div>
+  <% end %>
+</div>
+
+<div style="margin-top: 32px; text-align: center;">
+  <%= paginate @cars %>
+</div>
+
+<div style="margin-top: 24px;">
+  <%= link_to "Add a new car", new_car_path, class: "btn btn-success" %>
+</div>

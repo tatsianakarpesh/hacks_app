@@ -1,0 +1,47 @@
+<h1>Your Cart</h1>
+
+<% if @cart_items.any? %>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+    <thead>
+      <tr style="background: #f0f0f0;">
+        <th style="padding: 8px; text-align: left;">Car</th>
+        <th style="padding: 8px; text-align: left;">Year</th>
+        <th style="padding: 8px; text-align: left;">Price</th>
+        <th style="padding: 8px; text-align: left;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% total = 0 %>
+      <% @cart_items.each do |item| %>
+        <% car = item.car %>
+        <% total += car.price %>
+        <tr>
+          <td style="padding: 8px;">
+            <% if car.image_url.present? %>
+              <img src="<%= car.image_url %>" alt="<%= car.make %> <%= car.model %>" style="height: 48px; vertical-align: middle; margin-right: 8px; border-radius: 4px;" />
+            <% end %>
+            <%= car.make %> <%= car.model %>
+          </td>
+          <td style="padding: 8px;"><%= car.year %></td>
+          <td style="padding: 8px; color: #2a7; font-weight: bold;">$<%= number_with_precision(car.price, precision: 2, delimiter: ',') %></td>
+          <td style="padding: 8px;">
+            <%= button_to 'Remove', cart_item_path(item), method: :delete, data: { confirm: 'Remove this car from your cart?' }, class: 'btn btn-danger', style: 'margin-bottom: 4px;' %><br>
+            <%= button_to 'Save for Later', '#', method: :get, class: 'btn btn-secondary', disabled: true, style: 'margin-top: 4px;' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr style="background: #f8f8f8; font-weight: bold;">
+        <td colspan="2" style="padding: 8px; text-align: right;">Total:</td>
+        <td style="padding: 8px; color: #2a7;">$<%= number_with_precision(total, precision: 2, delimiter: ',') %></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+  <div style="margin-top: 16px;">
+    <%= button_to 'Buy', '#', method: :get, class: 'btn btn-success', style: 'padding: 12px 24px; font-size: 1.1em;' %>
+  </div>
+<% else %>
+  <p>Your cart is empty.</p>
+<% end %>
