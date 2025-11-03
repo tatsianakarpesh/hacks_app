@@ -4,23 +4,60 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
   <h1>Cars</h1>
-  <div class="search-form" style="flex: 0 1 300px;">
-    <%= form_tag cars_path, method: :get, class: "d-flex" do %>
-      <%= text_field_tag :search, params[:search], class: "form-control me-2", placeholder: "Search cars..." %>
-      <%= submit_tag "Search", class: "btn btn-outline-primary" %>
+  <div style="flex: 0 1 800px;">
+    <%= form_tag cars_path, method: :get, class: "d-flex gap-3", id: "cars-filter-form" do %>
+      <div class="d-flex gap-3 flex-grow-1 flex-wrap">
+        <%= text_field_tag :search, params[:search],
+            class: "form-control",
+            placeholder: "Search cars...",
+            style: "min-width: 200px;" %>
+
+        <%= select_tag :color,
+            options_for_select(@available_colors, params[:color]),
+            prompt: "Select Color",
+            class: "form-select",
+            style: "width: 130px;",
+            onchange: "this.form.submit()" %>
+
+        <%= select_tag :year,
+            options_for_select(@available_years, params[:year]),
+            prompt: "Select Year",
+            class: "form-select",
+            style: "width: 130px;",
+            onchange: "this.form.submit()" %>
+
+        <%= select_tag :sort,
+            options_for_select([
+              ['Newest First', 'year_desc'],
+              ['Oldest First', 'year_asc'],
+              ['Price: Low to High', 'price_asc'],
+              ['Price: High to Low', 'price_desc']
+            ], @current_sort),
+            class: "form-select",
+            style: "width: 160px;",
+            onchange: "this.form.submit()" %>
+      </div>
+
+      <% if params[:search].present? || params[:color].present? || params[:year].present? || params[:sort].present? %>
+        <%= link_to "Clear All", cars_path, class: "btn btn-outline-secondary" %>
+      <% end %>
     <% end %>
   </div>
 </div>
 
 <div id="cars" style="display: flex; flex-wrap: wrap; gap: 24px;">
-  <% @cars.each do |car| %>
-    <div style="flex: 0 1 300px; border: 1px solid #ccc; border-radius: 8px; padding: 16px; background: #fafafa; box-shadow: 0 2px 8px #eee;">
-      <%= render car %>
-      <p style="margin-top: 8px;">
-        <%= link_to "Show details", car, class: "btn btn-primary" %>
-      </p>
-      <%= button_to "Add to Cart", cart_items_path(car_id: car.id), method: :post, class: "btn btn-success", form: { style: 'margin-top: 8px;' } %>
-    </div>
+  <% if @cars.any? %>
+    <% @cars.each do |car| %>
+      <div style="flex: 0 1 300px; border: 1px solid #ccc; border-radius: 8px; padding: 16px; background: #fafafa; box-shadow: 0 2px 8px #eee;">
+        <%= render car %>
+        <p style="margin-top: 8px;">
+          <%= link_to "Show details", car, class: "btn btn-primary" %>
+        </p>
+        <%= button_to "Add to Cart", cart_items_path(car_id: car.id), method: :post, class: "btn btn-success", form: { style: 'margin-top: 8px;' } %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-center w-100 mt-4">No cars found matching your criteria.</p>
   <% end %>
 </div>
 
@@ -28,6 +65,18 @@
   <%= paginate @cars %>
 </div>
 
-<div style="margin-top: 24px;">
-  <%= link_to "Add a new car", new_car_path, class: "btn btn-success" %>
-</div>
+<%# Add JavaScript for better UX %>
+<%= javascript_tag do %>
+  document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('cars-filter-form');
+    var searchInput = form.querySelector('input[name="search"]');
+    var timer = null;
+
+    searchInput.addEventListener('input', function() {
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        form.submit();
+      }, 500);
+    });
+  });
+<% end %>
