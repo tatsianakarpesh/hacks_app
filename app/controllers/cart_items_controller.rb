@@ -5,17 +5,18 @@ class CartItemsController < ApplicationController
     car = Car.find(params[:car_id])
     unless @cart.cars.include?(car)
       @cart.cart_items.create(car: car)
-      flash[:notice] = 'Car added to cart.'
+      flash[:notice] = "#{car.year} #{car.make} #{car.model} has been added to your cart!"
     else
-      flash[:alert] = 'Car is already in your cart.'
+      flash[:alert] = 'This car is already in your cart.'
     end
     redirect_back fallback_location: cars_path
   end
 
   def destroy
     cart_item = @cart.cart_items.find(params[:id])
+    car = cart_item.car
     cart_item.destroy
-    flash[:notice] = 'Car removed from cart.'
+    flash[:notice] = "#{car.year} #{car.make} #{car.model} has been removed from your cart."
     redirect_to cart_path
   end
 

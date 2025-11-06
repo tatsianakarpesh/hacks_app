@@ -4,7 +4,9 @@ class CarsController < ApplicationController
 
   # GET /cars or /cars.json
   def index
-    @cars = Car.all.includes(:cart_items)  # Add includes to optimize queries
+    # Start with all cars but exclude those in current cart
+    @cars = Car.all.includes(:cart_items)
+    @cars = @cars.where.not(id: @cart.cart_items.select(:car_id)) if @cart.present?
 
     # Handle search
     if params[:search].present?

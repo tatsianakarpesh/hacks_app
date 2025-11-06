@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root "cars#index"
-  resource :cart, only: [:show]
+  resource :cart, only: [:show] do
+    delete 'clear', to: 'carts#clear_all', as: :clear
+    post 'restore', to: 'carts#restore', as: :restore
+  end
   resources :cart_items, only: [:create, :destroy]
   resources :cars
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

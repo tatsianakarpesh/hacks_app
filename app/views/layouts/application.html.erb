@@ -23,9 +23,20 @@
   </head>
 
   <body>
-    <nav style="padding: 12px; background: #f8f8f8; border-bottom: 1px solid #eee; margin-bottom: 24px;">
-      <%= link_to 'Car Shop', cars_path, style: 'font-weight: bold; margin-right: 24px;' %>
-      <%= link_to 'Cart', cart_path, style: 'font-weight: bold;' %>
+    <nav style="padding: 12px; background: #f8f8f8; border-bottom: 1px solid #eee; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <%= link_to 'Car Shop', cars_path, style: 'font-weight: bold; margin-right: 24px;' %>
+      </div>
+      <div>
+        <%= link_to cart_path, style: 'font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 8px;' do %>
+          <span>Cart</span>
+          <% if @cart && @cart.cart_items.any? %>
+            <span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.9em;">
+              <%= @cart.cart_items.count %>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
     </nav>
     <%= yield %>
   </body>

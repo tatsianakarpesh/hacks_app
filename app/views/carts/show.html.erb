@@ -1,6 +1,34 @@
-<h1>Your Cart</h1>
+<div class="notice-wrapper" style="margin-bottom: 20px;">
+  <% if notice %>
+    <div class="alert alert-success" style="padding: 12px; border-radius: 4px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724;">
+      <%= notice.html_safe %>
+    </div>
+  <% end %>
+  <% if alert %>
+    <div class="alert alert-danger" style="padding: 12px; border-radius: 4px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24;">
+      <%= alert %>
+    </div>
+  <% end %>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <h1>Your Cart</h1>
+  <% if @cart_items.any? %>
+    <div>
+      <%= button_to 'Clear Cart', clear_cart_path,
+          method: :delete,
+          class: 'btn btn-danger',
+          data: { confirm: 'Are you sure you want to clear your cart? You can undo this action immediately after clearing.' },
+          style: 'padding: 8px 16px;' %>
+    </div>
+  <% end %>
+</div>
 
 <% if @cart_items.any? %>
+  <div style="margin-bottom: 20px;">
+    <h4 style="margin: 0;">Items in cart: <%= @cart_items.count %></h4>
+  </div>
+
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
     <thead>
       <tr style="background: #f0f0f0;">
