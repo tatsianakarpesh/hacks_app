@@ -2,30 +2,44 @@
 
 <% content_for :title, "Cars" %>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-  <h1>Cars</h1>
-  <div style="flex: 0 1 800px;">
-    <%= form_tag cars_path, method: :get, class: "d-flex gap-3", id: "cars-filter-form" do %>
-      <div class="d-flex gap-3 flex-grow-1 flex-wrap">
-        <%= text_field_tag :search, params[:search],
-            class: "form-control",
-            placeholder: "Search cars...",
-            style: "min-width: 200px;" %>
+<div class="container-fluid">
+  <!-- Hero Section -->
+  <div class="bg-primary text-white py-5 mb-4 rounded" style="background: linear-gradient(135deg, #0d6efd, #084298);">
+    <div class="container">
+      <h1 class="display-4 fw-bold"><i class="fas fa-car-side me-3"></i>Find Your Perfect Car</h1>
+      <p class="lead">Browse through our collection of premium vehicles</p>
+    </div>
+  </div>
 
+  <!-- Search and Filters -->
+  <div class="container mb-4">
+    <%= form_tag cars_path, method: :get, class: "row g-3 align-items-center", id: "cars-filter-form" do %>
+      <div class="col-12 col-md-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <%= text_field_tag :search, params[:search],
+              class: "form-control",
+              placeholder: "Search by make or model..." %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2">
         <%= select_tag :color,
             options_for_select(@available_colors, params[:color]),
             prompt: "Select Color",
             class: "form-select",
-            style: "width: 130px;",
             onchange: "this.form.submit()" %>
+      </div>
 
+      <div class="col-6 col-md-2">
         <%= select_tag :year,
             options_for_select(@available_years, params[:year]),
             prompt: "Select Year",
             class: "form-select",
-            style: "width: 130px;",
             onchange: "this.form.submit()" %>
+      </div>
 
+      <div class="col-8 col-md-2">
         <%= select_tag :sort,
             options_for_select([
               ['Newest First', 'year_desc'],
@@ -34,38 +48,72 @@
               ['Price: High to Low', 'price_desc']
             ], @current_sort),
             class: "form-select",
-            style: "width: 160px;",
             onchange: "this.form.submit()" %>
       </div>
 
-      <% if params[:search].present? || params[:color].present? || params[:year].present? || params[:sort].present? %>
-        <%= link_to "Clear All", cars_path, class: "btn btn-outline-secondary" %>
-      <% end %>
+      <div class="col-4 col-md-2">
+        <% if params[:search].present? || params[:color].present? || params[:year].present? || params[:sort].present? %>
+          <%= link_to cars_path, class: "btn btn-outline-secondary w-100" do %>
+            <i class="fas fa-times me-1"></i> Clear
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Cars Grid -->
+  <div class="container">
+    <% if @cars.any? %>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        <% @cars.each do |car| %>
+          <div class="col">
+            <div class="card h-100">
+              <% if car.image_url.present? %>
+                <%= image_tag car.image_url, class: "card-img-top", alt: "#{car.make} #{car.model}", style: "height: 200px; object-fit: cover;" %>
+              <% end %>
+
+              <div class="card-body">
+                <h5 class="card-title mb-3"><%= car.make %> <%= car.model %></h5>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge bg-primary"><%= car.year %></span>
+                  <span class="price-tag h5 mb-0">$<%= number_with_delimiter(car.price, delimiter: ',') %></span>
+                </div>
+                <p class="card-text text-muted small"><%= car.description %></p>
+              </div>
+
+              <div class="card-footer bg-white border-top-0">
+                <div class="d-grid gap-2">
+                  <%= link_to car, class: "btn btn-outline-primary" do %>
+                    <i class="fas fa-info-circle me-1"></i> Details
+                  <% end %>
+                  <%= button_to cart_items_path(car_id: car.id),
+                      method: :post,
+                      class: "btn btn-primary w-100",
+                      form: { class: 'd-grid' } do %>
+                    <i class="fas fa-shopping-cart me-1"></i> Add to Cart
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center mt-4">
+        <%= paginate @cars, theme: 'bootstrap4', window: 2 %>
+      </div>
+
+    <% else %>
+      <div class="text-center py-5">
+        <i class="fas fa-car fa-3x text-muted mb-3"></i>
+        <h3>No cars found</h3>
+        <p class="text-muted">Try adjusting your search criteria</p>
+      </div>
     <% end %>
   </div>
 </div>
 
-<div id="cars" style="display: flex; flex-wrap: wrap; gap: 24px;">
-  <% if @cars.any? %>
-    <% @cars.each do |car| %>
-      <div style="flex: 0 1 300px; border: 1px solid #ccc; border-radius: 8px; padding: 16px; background: #fafafa; box-shadow: 0 2px 8px #eee;">
-        <%= render car %>
-        <p style="margin-top: 8px;">
-          <%= link_to "Show details", car, class: "btn btn-primary" %>
-        </p>
-        <%= button_to "Add to Cart", cart_items_path(car_id: car.id), method: :post, class: "btn btn-success", form: { style: 'margin-top: 8px;' } %>
-      </div>
-    <% end %>
-  <% else %>
-    <p class="text-center w-100 mt-4">No cars found matching your criteria.</p>
-  <% end %>
-</div>
-
-<div style="margin-top: 32px; text-align: center;">
-  <%= paginate @cars %>
-</div>
-
-<%# Add JavaScript for better UX %>
 <%= javascript_tag do %>
   document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('cars-filter-form');

@@ -1,75 +1,104 @@
-<div class="notice-wrapper" style="margin-bottom: 20px;">
-  <% if notice %>
-    <div class="alert alert-success" style="padding: 12px; border-radius: 4px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724;">
-      <%= notice.html_safe %>
-    </div>
-  <% end %>
-  <% if alert %>
-    <div class="alert alert-danger" style="padding: 12px; border-radius: 4px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24;">
-      <%= alert %>
-    </div>
-  <% end %>
-</div>
-
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-  <h1>Your Cart</h1>
-  <% if @cart_items.any? %>
-    <div>
-      <%= button_to 'Clear Cart', clear_cart_path,
-          method: :delete,
-          class: 'btn btn-danger',
-          data: { confirm: 'Are you sure you want to clear your cart? You can undo this action immediately after clearing.' },
-          style: 'padding: 8px 16px;' %>
-    </div>
-  <% end %>
-</div>
-
-<% if @cart_items.any? %>
-  <div style="margin-bottom: 20px;">
-    <h4 style="margin: 0;">Items in cart: <%= @cart_items.count %></h4>
-  </div>
-
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-    <thead>
-      <tr style="background: #f0f0f0;">
-        <th style="padding: 8px; text-align: left;">Car</th>
-        <th style="padding: 8px; text-align: left;">Year</th>
-        <th style="padding: 8px; text-align: left;">Price</th>
-        <th style="padding: 8px; text-align: left;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% total = 0 %>
-      <% @cart_items.each do |item| %>
-        <% car = item.car %>
-        <% total += car.price %>
-        <tr>
-          <td style="padding: 8px;">
-            <% if car.image_url.present? %>
-              <img src="<%= car.image_url %>" alt="<%= car.make %> <%= car.model %>" style="height: 48px; vertical-align: middle; margin-right: 8px; border-radius: 4px;" />
-            <% end %>
-            <%= car.make %> <%= car.model %>
-          </td>
-          <td style="padding: 8px;"><%= car.year %></td>
-          <td style="padding: 8px; color: #2a7; font-weight: bold;">$<%= number_with_precision(car.price, precision: 2, delimiter: ',') %></td>
-          <td style="padding: 8px;">
-            <%= button_to 'Remove', cart_item_path(item), method: :delete, data: { confirm: 'Remove this car from your cart?' }, class: 'btn btn-danger', style: 'margin-bottom: 4px;' %><br>
-            <%= button_to 'Save for Later', '#', method: :get, class: 'btn btn-secondary', disabled: true, style: 'margin-top: 4px;' %>
-          </td>
-        </tr>
+<div class="container">
+  <!-- Cart Header -->
+  <div class="bg-light p-4 rounded-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="mb-0"><i class="fas fa-shopping-cart me-3"></i>Your Cart</h1>
+        <% if @cart_items.any? %>
+          <p class="text-muted mb-0">You have <%= @cart_items.count %> items in your cart</p>
+        <% end %>
+      </div>
+      <% if @cart_items.any? %>
+        <%= button_to clear_cart_path,
+            method: :delete,
+            class: "btn btn-outline-danger",
+            data: { confirm: 'Are you sure you want to clear your cart? You can undo this action immediately after clearing.' } do %>
+          <i class="fas fa-trash me-2"></i>Clear Cart
+        <% end %>
       <% end %>
-    </tbody>
-    <tfoot>
-      <tr style="background: #f8f8f8; font-weight: bold;">
-        <td colspan="2" style="padding: 8px; text-align: right;">Total:</td>
-        <td style="padding: 8px; color: #2a7;">$<%= number_with_precision(total, precision: 2, delimiter: ',') %></td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
-  <div style="margin-top: 16px;">
-    <%= button_to 'Buy', '#', method: :get, class: 'btn btn-success', style: 'padding: 12px 24px; font-size: 1.1em;' %>
+    </div>
   </div>
-<% else %>
-  <p>Your cart is empty.</p>
-<% end %>
+
+  <% if @cart_items.any? %>
+    <!-- Cart Items -->
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="px-4">Vehicle</th>
+                <th scope="col" class="text-center">Year</th>
+                <th scope="col" class="text-end px-4">Price</th>
+                <th scope="col" class="text-end px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% total = 0 %>
+              <% @cart_items.each do |item| %>
+                <% car = item.car %>
+                <% total += car.price %>
+                <tr>
+                  <td class="align-middle px-4">
+                    <div class="d-flex align-items-center">
+                      <% if car.image_url.present? %>
+                        <%= image_tag car.image_url,
+                            class: "rounded me-3",
+                            alt: "#{car.make} #{car.model}",
+                            style: "width: 80px; height: 60px; object-fit: cover;" %>
+                      <% end %>
+                      <div>
+                        <h6 class="mb-0"><%= car.make %> <%= car.model %></h6>
+                        <small class="text-muted"><%= car.description.split('.').first %></small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="align-middle text-center">
+                    <span class="badge bg-primary"><%= car.year %></span>
+                  </td>
+                  <td class="align-middle text-end px-4">
+                    <span class="price-tag">$<%= number_with_delimiter(car.price, delimiter: ',') %></span>
+                  </td>
+                  <td class="align-middle text-end px-4">
+                    <%= button_to cart_item_path(item),
+                        method: :delete,
+                        class: "btn btn-outline-danger btn-sm",
+                        data: { confirm: 'Remove this car from your cart?' } do %>
+                      <i class="fas fa-trash me-1"></i>Remove
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot class="table-light">
+              <tr>
+                <td colspan="2" class="text-end px-4"><strong>Total:</strong></td>
+                <td class="text-end px-4">
+                  <span class="price-tag h4 mb-0">$<%= number_with_delimiter(total, delimiter: ',') %></span>
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkout Section -->
+    <div class="text-center mt-4">
+      <%= button_to '#', method: :get, class: "btn btn-primary btn-lg px-5" do %>
+        <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty Cart -->
+    <div class="text-center py-5">
+      <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+      <h3>Your cart is empty</h3>
+      <p class="text-muted">Start adding some amazing cars to your cart!</p>
+      <%= link_to cars_path, class: "btn btn-primary mt-3" do %>
+        <i class="fas fa-car me-2"></i>Browse Cars
+      <% end %>
+    </div>
+  <% end %>
+</div>
