@@ -8,76 +8,122 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# This file contains the seed data for the car shop application
 puts "Cleaning up existing cars..."
 Car.destroy_all
 
 TARGET_COUNT = 1_000
 
-# Extended list of car manufacturers and their models
+# Structured car data with accurate descriptions and model-specific details
 CARS_DATA = {
-  'Audi' => ['A3', 'A4', 'A6', 'Q3', 'Q5', 'Q7', 'RS6', 'e-tron'],
-  'BMW' => ['3 Series', '5 Series', 'X3', 'X5', 'M3', 'M5', 'i4', 'iX'],
-  'Mercedes' => ['C-Class', 'E-Class', 'S-Class', 'GLC', 'GLE', 'AMG GT', 'EQS'],
-  'Volkswagen' => ['Golf', 'Passat', 'Tiguan', 'Atlas', 'ID.4', 'Arteon'],
-  'Porsche' => ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan'],
-  'Tesla' => ['Model 3', 'Model S', 'Model X', 'Model Y', 'Cybertruck'],
-  'Toyota' => ['Camry', 'Corolla', 'RAV4', 'Highlander', 'Supra', 'Prius'],
-  'Honda' => ['Civic', 'Accord', 'CR-V', 'Pilot', 'HR-V'],
-  'Ford' => ['Mustang', 'F-150', 'Explorer', 'Bronco', 'Mach-E'],
-  'Chevrolet' => ['Camaro', 'Silverado', 'Tahoe', 'Corvette', 'Bolt'],
-  'Hyundai' => ['Tucson', 'Santa Fe', 'Elantra', 'Ioniq 5', 'Palisade'],
-  'Kia' => ['Sportage', 'Telluride', 'EV6', 'K5', 'Sorento'],
-  'Volvo' => ['XC40', 'XC60', 'XC90', 'S60', 'C40'],
-  'Mazda' => ['CX-5', 'CX-9', 'Mazda3', 'Mazda6', 'MX-5'],
-  'Lexus' => ['RX', 'NX', 'ES', 'IS', 'LC'],
-  'Jaguar' => ['F-Pace', 'I-Pace', 'XF', 'F-Type'],
-  'Land Rover' => ['Range Rover', 'Defender', 'Discovery', 'Evoque'],
-  'Subaru' => ['Outback', 'Forester', 'WRX', 'Crosstrek'],
-  'Acura' => ['MDX', 'RDX', 'TLX', 'Integra'],
-  'Infiniti' => ['Q50', 'QX50', 'QX60', 'QX80']
+  'Acura' => {
+    'TLX' => {
+      description_template: "%{color} %{year} Acura TLX. Sport sedan with premium features including Diamond Pentagon grille, Jewel Eye® LED headlights, and precision handling.",
+      price_range: [35_000, 55_000],
+      years: (2020..2025)
+    },
+    'MDX' => {
+      description_template: "%{color} %{year} Acura MDX. Luxury SUV featuring Super Handling All-Wheel Drive™, premium leather interior, and advanced safety features.",
+      price_range: [45_000, 65_000],
+      years: (2020..2025)
+    }
+  },
+  'BMW' => {
+    '3 Series' => {
+      description_template: "%{color} %{year} BMW 3 Series. Athletic sport sedan with iconic kidney grille, premium interior, and dynamic driving performance.",
+      price_range: [40_000, 65_000],
+      years: (2019..2025)
+    },
+    'X5' => {
+      description_template: "%{color} %{year} BMW X5. Luxurious SUV featuring xDrive all-wheel drive, spacious interior, and cutting-edge technology.",
+      price_range: [55_000, 85_000],
+      years: (2019..2025)
+    }
+  },
+  'Mercedes' => {
+    'C-Class' => {
+      description_template: "%{color} %{year} Mercedes-Benz C-Class. Elegant sedan with sophisticated styling, premium materials, and advanced driver assistance systems.",
+      price_range: [42_000, 70_000],
+      years: (2019..2025)
+    },
+    'GLE' => {
+      description_template: "%{color} %{year} Mercedes-Benz GLE. Premium SUV with AIRMATIC® suspension, luxurious cabin, and innovative MBUX infotainment.",
+      price_range: [58_000, 90_000],
+      years: (2020..2025)
+    }
+  },
+  'Audi' => {
+    'A4' => {
+      description_template: "%{color} %{year} Audi A4. Sophisticated sedan with quattro® all-wheel drive, virtual cockpit, and refined driving dynamics.",
+      price_range: [38_000, 60_000],
+      years: (2019..2025)
+    },
+    'Q7' => {
+      description_template: "%{color} %{year} Audi Q7. Seven-seat luxury SUV featuring adaptive air suspension, premium Bang & Olufsen® sound, and quattro® capability.",
+      price_range: [55_000, 85_000],
+      years: (2019..2025)
+    }
+  },
+  'Lexus' => {
+    'ES' => {
+      description_template: "%{color} %{year} Lexus ES. Refined luxury sedan with whisper-quiet cabin, Mark Levinson® audio, and Lexus Safety System+.",
+      price_range: [40_000, 55_000],
+      years: (2019..2025)
+    },
+    'RX' => {
+      description_template: "%{color} %{year} Lexus RX. Premium crossover SUV with signature spindle grille, exceptional comfort, and advanced safety features.",
+      price_range: [45_000, 65_000],
+      years: (2019..2025)
+    }
+  }
 }
 
-COLORS = [
-  'Alpine White', 'Jet Black', 'Mineral Gray', 'Carbon Black',
-  'Sapphire Blue', 'Mediterranean Blue', 'Racing Red', 'Ferrari Red',
-  'British Racing Green', 'Emerald Green', 'Sunset Orange', 'Daytona Violet',
-  'Silver Metallic', 'Champagne', 'Pearl White', 'Metallic Bronze',
-  'Moonstone', 'Nardo Gray', 'Tanzanite Blue', 'Dravit Gray'
-]
+COLORS = {
+  'Alpine White' => 'white',
+  'Jet Black' => 'black',
+  'Mineral Gray' => 'gray',
+  'Carbon Black' => 'black',
+  'Mediterranean Blue' => 'blue',
+  'Racing Red' => 'red',
+  'British Racing Green' => 'green',
+  'Sapphire Blue' => 'blue',
+  'Pearl White' => 'white'
+}
 
-CURRENT_YEAR = Time.current.year
-
-puts "Creating #{TARGET_COUNT} cars with variety..."
+puts "Creating #{TARGET_COUNT} cars with accurate details..."
 
 cars_data = TARGET_COUNT.times.map do |i|
   make = CARS_DATA.keys.sample
-  model = CARS_DATA[make].sample
-  year = rand(2015..CURRENT_YEAR)
-  color = COLORS.sample
+  model = CARS_DATA[make].keys.sample
+  model_data = CARS_DATA[make][model]
+  year = model_data[:years].to_a.sample
+  color_name, color_code = COLORS.to_a.sample
 
-  # Price logic based on make, year, and model
-  base_price = case make
-    when 'Porsche', 'Ferrari', 'Lamborghini'
-      rand(80_000..200_000)
-    when 'BMW', 'Mercedes', 'Audi', 'Tesla'
-      rand(45_000..120_000)
-    when 'Lexus', 'Volvo', 'Land Rover'
-      rand(40_000..90_000)
-    else
-      rand(25_000..60_000)
-  end
-
-  # Adjust price based on year
-  year_factor = (year - 2015) / 10.0
+  # Calculate price based on year and model range
+  base_price = rand(model_data[:price_range][0]..model_data[:price_range][1])
+  year_factor = (year - model_data[:years].first) / 5.0
   price = (base_price * (1 + year_factor)).round(-3)
+
+  # Create accurate description
+  description = model_data[:description_template] % { color: color_name, year: year }
+
+  # Generate proper image URL with correct make/model
+  image_url = "https://cdn.imagin.studio/getimage?" + [
+    "customer=img",
+    "make=#{make.downcase}",
+    "modelFamily=#{model.downcase.gsub(' ', '-')}",
+    "angle=23",
+    "year=#{year}",
+    "paintId=#{color_code}"
+  ].join('&')
 
   {
     make: make,
     model: model,
     year: year,
     price: price,
-    description: "#{color} #{year} #{make} #{model}. Excellent condition with premium features.",
-    image_url: "https://cdn.imagin.studio/getimage?customer=img&make=#{make.downcase}&modelFamily=#{model.downcase.gsub(' ', '-')}&angle=23&year=#{year}&paintId=#{color.downcase.gsub(' ', '-')}",
+    description: description,
+    image_url: image_url,
     created_at: Time.current,
     updated_at: Time.current
   }
@@ -91,5 +137,9 @@ puts "\nSeeding completed!"
 puts "Total cars in database: #{total_count}"
 puts "\nSample of cars created:"
 Car.order("RANDOM()").limit(5).each do |car|
-  puts "- #{car.year} #{car.make} #{car.model} (#{car.description.split('.').first}) - $#{car.price.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\\1,')}"
+  puts "- #{car.year} #{car.make} #{car.model}"
+  puts "  Description: #{car.description}"
+  puts "  Price: $#{car.price.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\\1,')}"
+  puts "  Image URL: #{car.image_url}"
+  puts ""
 end
