@@ -75,6 +75,27 @@
       .dropdown-item:active {
         background-color: #0d6efd;
       }
+      .avatar-emoji-fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.2em;
+      }
+      .avatar-emoji-fallback.large {
+        width: 150px;
+        height: 150px;
+        font-size: 3em;
+      }
+      .avatar-emoji-fallback.small {
+        width: 32px;
+        height: 32px;
+      }
+    </style>
+        padding: 0.375rem 0;
+        margin-bottom: 0;
+        min-height: 1.5rem;
+      }
     </style>
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -115,16 +136,26 @@
               <% end %>
             </li>
             <li class="nav-item dropdown ms-3" data-controller="dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                <i class="fas fa-user fa-lg"></i>
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                <% if user_signed_in? %>
+                  <% if current_user.avatar_display %>
+                    <%= image_tag current_user.avatar_display, class: "rounded-circle", style: "width: 32px; height: 32px; object-fit: cover;" %>
+                  <% else %>
+                    <div class="<%= current_user.avatar_fallback_class %> small">
+                      <%= current_user.avatar_fallback_content %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <i class="fas fa-user fa-lg"></i>
+                <% end %>
               </a>
               <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                 <% if user_signed_in? %>
                   <li><span class="dropdown-item-text text-muted"><%= current_user.email %></span></li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
-                    <%= link_to edit_user_registration_path, class: "dropdown-item" do %>
-                      <i class="fas fa-user-edit me-2"></i>Edit Profile
+                    <%= link_to user_profile_path, class: "dropdown-item" do %>
+                      <i class="fas fa-user me-2"></i>View Profile
                     <% end %>
                   </li>
                   <li>

@@ -8,7 +8,36 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# This file contains the seed data for the car shop application
+# Create sample cars
+cars_data = [
+  {
+    make: 'Tesla',
+    model: 'Model S',
+    year: 2023,
+    price: 89990,
+    description: 'Electric Luxury Sedan, Pearl White'
+  },
+  {
+    make: 'BMW',
+    model: 'M5',
+    year: 2023,
+    price: 105000,
+    description: 'High-performance Luxury Sedan, Black Sapphire'
+  },
+  {
+    make: 'Mercedes-Benz',
+    model: 'S-Class',
+    year: 2023,
+    price: 115000,
+    description: 'Ultra-luxury Sedan, Obsidian Black'
+  }
+]
+
+cars_data.each do |car_data|
+  Car.find_or_create_by!(car_data)
+end
+
+puts "Sample cars created successfully!"
 puts "Cleaning up existing cars..."
 Car.destroy_all
 

@@ -1,6 +1,19 @@
 Rails.application.routes.draw do
-  devise_for :users
-  root "cars#index"
+  # Authentication routes
+  devise_for :users, controllers: {
+    registrations: 'users/registrations',
+    passwords: 'users/passwords'
+  }
+
+  # Profile routes
+  devise_scope :user do
+    get 'profile', to: 'users/registrations#show', as: :user_profile
+    get 'profile/password/edit', to: 'users/passwords#edit', as: :edit_profile_password
+    put 'profile/password', to: 'users/passwords#update', as: :update_profile_password
+  end
+
+  # Root route
+  root to: "cars#index"
   resource :cart, only: [:show] do
     delete 'clear', to: 'carts#clear_all', as: :clear
     post 'restore', to: 'carts#restore', as: :restore

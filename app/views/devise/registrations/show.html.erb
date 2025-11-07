@@ -1,0 +1,55 @@
+<%= render "devise/shared/error_messages", resource: resource %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-body">
+            <div class="text-center mb-4">
+              <% if @user.avatar_display %>
+                <%= image_tag @user.avatar_display, class: "rounded-circle mb-2", style: "width: 150px; height: 150px; object-fit: cover;" %>
+              <% else %>
+                <div class="<%= @user.avatar_fallback_class %> large mb-2">
+                  <%= @user.avatar_fallback_content %>
+                </div>
+              <% end %>
+            <h2 class="card-title mb-1"><%= @user.full_name.presence || @user.email %></h2>
+            <p class="text-muted"><%= @user.email %></p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label text-muted">First Name</label>
+                <p class="form-control-static"><%= @user.first_name.presence || "Not specified" %></p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label text-muted">Last Name</label>
+                <p class="form-control-static"><%= @user.last_name.presence || "Not specified" %></p>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="mb-3">
+                <label class="form-label text-muted">Phone Number</label>
+                <p class="form-control-static"><%= @user.phone_number.presence || "Not specified" %></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <%= link_to edit_user_registration_path, class: "btn btn-primary me-2" do %>
+              <i class="fas fa-edit me-2"></i>Edit Profile
+            <% end %>
+            <%= link_to edit_profile_password_path, class: "btn btn-outline-primary", data: { turbo: false } do %>
+              <i class="fas fa-key me-2"></i>Change Password
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
