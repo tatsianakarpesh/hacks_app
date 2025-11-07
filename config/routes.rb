@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   root "cars#index"
   resource :cart, only: [:show] do
     delete 'clear', to: 'carts#clear_all', as: :clear
