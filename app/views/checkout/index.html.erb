@@ -1,0 +1,123 @@
+<div class="container mt-5">
+  <div class="row">
+    <!-- Checkout Form -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Checkout</h2>
+
+          <% unless user_signed_in? %>
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+              <div>
+                <i class="fas fa-info-circle me-2"></i>
+                Already have an account?
+                <%= link_to "Log in", new_user_session_path, class: "alert-link" %>
+                or
+                <%= link_to "Sign up", new_user_registration_path, class: "alert-link" %>
+              </div>
+              <div>
+                <%= link_to "Continue as Guest", checkout_path(checkout_type: 'guest'),
+                    class: "btn btn-outline-primary btn-sm" %>
+              </div>
+            </div>
+          <% end %>
+
+          <%= form_tag process_checkout_path, method: :post, class: "needs-validation", novalidate: true do %>
+            <div class="mb-4">
+              <h5>Contact Information</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email *</label>
+                  <%= email_field_tag :email, @order&.dig(:email), class: "form-control", required: true %>
+                  <div class="invalid-feedback">Please enter a valid email address.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone Number *</label>
+                  <%= telephone_field_tag :phone_number, @order&.dig(:phone_number),
+                      class: "form-control", required: true, placeholder: "+1234567890" %>
+                  <div class="invalid-feedback">Please enter a valid phone number.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5>Personal Information</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="first_name" class="form-label">First Name *</label>
+                  <%= text_field_tag :first_name, @order&.dig(:first_name), class: "form-control", required: true %>
+                  <div class="invalid-feedback">Please enter your first name.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="last_name" class="form-label">Last Name *</label>
+                  <%= text_field_tag :last_name, @order&.dig(:last_name), class: "form-control", required: true %>
+                  <div class="invalid-feedback">Please enter your last name.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5>Payment Information</h5>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Payment processing will be implemented in the next phase.
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <%= submit_tag "Place Order", class: "btn btn-primary btn-lg" %>
+              <%= link_to "Back to Cart", cart_path, class: "btn btn-outline-secondary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-4">Order Summary</h5>
+
+          <% @cart.cart_items.each do |item| %>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h6 class="mb-0"><%= item.car.make %> <%= item.car.model %></h6>
+                <small class="text-muted">Year: <%= item.car.year %></small>
+              </div>
+              <span class="price-tag"><%= number_to_currency(item.car.price) %></span>
+            </div>
+          <% end %>
+
+          <hr>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span>Total:</span>
+            <span class="price-tag h5 mb-0">
+              <%= number_to_currency(@cart.cart_items.sum { |item| item.car.price }) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_for :page_scripts do %>
+  <script>
+    // Form validation
+    (function () {
+      'use strict'
+      var forms = document.querySelectorAll('.needs-validation')
+      Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+  </script>
+<% end %>

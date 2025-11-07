@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Root route must be at the top
+  root "cars#index"
+
   # Authentication routes
   devise_for :users, controllers: {
     registrations: 'users/registrations',
@@ -12,14 +15,19 @@ Rails.application.routes.draw do
     put 'profile/password', to: 'users/passwords#update', as: :update_profile_password
   end
 
-  # Root route
-  root to: "cars#index"
+  # Resource routes
+  resources :cars
+  resources :cart_items, only: [:create, :destroy]
+
+  # Cart routes
   resource :cart, only: [:show] do
     delete 'clear', to: 'carts#clear_all', as: :clear
     post 'restore', to: 'carts#restore', as: :restore
   end
-  resources :cart_items, only: [:create, :destroy]
-  resources :cars
+
+  # Checkout routes
+  get 'checkout', to: 'checkout#index', as: :checkout
+  post 'checkout/process', to: 'checkout#process_order', as: :process_checkout
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
