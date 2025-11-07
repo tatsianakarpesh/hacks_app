@@ -14,66 +14,62 @@ Car.destroy_all
 
 TARGET_COUNT = 1_000
 
-# Structured car data with accurate descriptions and model-specific details
+# Structured car data with detailed technical specifications
 CARS_DATA = {
   'Acura' => {
     'TLX' => {
-      description_template: "%{color} %{year} Acura TLX. Sport sedan with premium features including Diamond Pentagon grille, Jewel Eye® LED headlights, and precision handling.",
+      description_template: "%{color} %{year} Acura TLX. %{engine_specs}\nEngine: %{engine_type}\nFuel Type: %{fuel_type}\nMileage: %{mileage} miles\nEngine Power: %{engine_power} HP\n\nFeatures: Premium sport sedan with Diamond Pentagon grille, Jewel Eye® LED headlights, and precision handling. %{transmission} transmission with paddle shifters. Includes advanced driver assistance systems and premium audio.",
       price_range: [35_000, 55_000],
-      years: (2020..2025)
+      years: (2020..2025),
+      engine_specs: {
+        types: ['2.0L Turbo I4', '3.0L Turbo V6'],
+        powers: ['272', '355'],
+        transmission: ['10-speed automatic']
+      }
     },
     'MDX' => {
-      description_template: "%{color} %{year} Acura MDX. Luxury SUV featuring Super Handling All-Wheel Drive™, premium leather interior, and advanced safety features.",
+      description_template: "%{color} %{year} Acura MDX. %{engine_specs}\nEngine: %{engine_type}\nFuel Type: %{fuel_type}\nMileage: %{mileage} miles\nEngine Power: %{engine_power} HP\n\nFeatures: Luxury SUV with Super Handling All-Wheel Drive™. %{transmission} transmission. Premium leather interior and advanced safety features. Spacious three-row seating with premium amenities.",
       price_range: [45_000, 65_000],
-      years: (2020..2025)
+      years: (2020..2025),
+      engine_specs: {
+        types: ['3.5L V6', '3.0L Turbo V6'],
+        powers: ['290', '355'],
+        transmission: ['10-speed automatic']
+      }
     }
   },
   'BMW' => {
     '3 Series' => {
-      description_template: "%{color} %{year} BMW 3 Series. Athletic sport sedan with iconic kidney grille, premium interior, and dynamic driving performance.",
+      description_template: "%{color} %{year} BMW 3 Series. %{engine_specs}\nEngine: %{engine_type}\nFuel Type: %{fuel_type}\nMileage: %{mileage} miles\nEngine Power: %{engine_power} HP\n\nFeatures: Athletic sport sedan with iconic kidney grille. %{transmission} transmission. Premium interior with latest iDrive system. Includes BMW Live Cockpit Professional and driving assistance features.",
       price_range: [40_000, 65_000],
-      years: (2019..2025)
+      years: (2019..2025),
+      engine_specs: {
+        types: ['2.0L TwinPower Turbo I4', '3.0L TwinPower Turbo I6'],
+        powers: ['255', '382'],
+        transmission: ['8-speed automatic']
+      }
     },
     'X5' => {
-      description_template: "%{color} %{year} BMW X5. Luxurious SUV featuring xDrive all-wheel drive, spacious interior, and cutting-edge technology.",
+      description_template: "%{color} %{year} BMW X5. %{engine_specs}\nEngine: %{engine_type}\nFuel Type: %{fuel_type}\nMileage: %{mileage} miles\nEngine Power: %{engine_power} HP\n\nFeatures: Luxurious SUV with xDrive all-wheel drive. %{transmission} transmission. Spacious interior with panoramic moonroof. Features latest BMW technology and premium Harman Kardon® audio.",
       price_range: [55_000, 85_000],
-      years: (2019..2025)
+      years: (2019..2025),
+      engine_specs: {
+        types: ['3.0L TwinPower Turbo I6', '4.4L TwinPower Turbo V8'],
+        powers: ['335', '523'],
+        transmission: ['8-speed automatic']
+      }
     }
   },
   'Mercedes' => {
     'C-Class' => {
-      description_template: "%{color} %{year} Mercedes-Benz C-Class. Elegant sedan with sophisticated styling, premium materials, and advanced driver assistance systems.",
+      description_template: "%{color} %{year} Mercedes-Benz C-Class. %{engine_specs}\nEngine: %{engine_type}\nFuel Type: %{fuel_type}\nMileage: %{mileage} miles\nEngine Power: %{engine_power} HP\n\nFeatures: Elegant sedan with sophisticated styling. %{transmission} transmission. Premium materials and advanced driver assistance systems. Includes MBUX infotainment system with voice control.",
       price_range: [42_000, 70_000],
-      years: (2019..2025)
-    },
-    'GLE' => {
-      description_template: "%{color} %{year} Mercedes-Benz GLE. Premium SUV with AIRMATIC® suspension, luxurious cabin, and innovative MBUX infotainment.",
-      price_range: [58_000, 90_000],
-      years: (2020..2025)
-    }
-  },
-  'Audi' => {
-    'A4' => {
-      description_template: "%{color} %{year} Audi A4. Sophisticated sedan with quattro® all-wheel drive, virtual cockpit, and refined driving dynamics.",
-      price_range: [38_000, 60_000],
-      years: (2019..2025)
-    },
-    'Q7' => {
-      description_template: "%{color} %{year} Audi Q7. Seven-seat luxury SUV featuring adaptive air suspension, premium Bang & Olufsen® sound, and quattro® capability.",
-      price_range: [55_000, 85_000],
-      years: (2019..2025)
-    }
-  },
-  'Lexus' => {
-    'ES' => {
-      description_template: "%{color} %{year} Lexus ES. Refined luxury sedan with whisper-quiet cabin, Mark Levinson® audio, and Lexus Safety System+.",
-      price_range: [40_000, 55_000],
-      years: (2019..2025)
-    },
-    'RX' => {
-      description_template: "%{color} %{year} Lexus RX. Premium crossover SUV with signature spindle grille, exceptional comfort, and advanced safety features.",
-      price_range: [45_000, 65_000],
-      years: (2019..2025)
+      years: (2019..2025),
+      engine_specs: {
+        types: ['2.0L Turbo I4', '3.0L Biturbo V6'],
+        powers: ['255', '385'],
+        transmission: ['9-speed automatic']
+      }
     }
   }
 }
@@ -90,7 +86,9 @@ COLORS = {
   'Pearl White' => 'white'
 }
 
-puts "Creating #{TARGET_COUNT} cars with accurate details..."
+FUEL_TYPES = ['Premium Gasoline', 'Regular Gasoline', 'Diesel', 'Hybrid', 'Electric']
+
+puts "Creating #{TARGET_COUNT} cars with detailed specifications..."
 
 cars_data = TARGET_COUNT.times.map do |i|
   make = CARS_DATA.keys.sample
@@ -99,13 +97,38 @@ cars_data = TARGET_COUNT.times.map do |i|
   year = model_data[:years].to_a.sample
   color_name, color_code = COLORS.to_a.sample
 
-  # Calculate price based on year and model range
-  base_price = rand(model_data[:price_range][0]..model_data[:price_range][1])
-  year_factor = (year - model_data[:years].first) / 5.0
-  price = (base_price * (1 + year_factor)).round(-3)
+  # Get random engine specs
+  engine_specs = model_data[:engine_specs]
+  engine_type = engine_specs[:types].sample
+  engine_power = engine_specs[:powers].sample
+  transmission = engine_specs[:transmission].sample
+  fuel_type = FUEL_TYPES.sample
 
-  # Create accurate description
-  description = model_data[:description_template] % { color: color_name, year: year }
+  # Generate realistic mileage based on year
+  max_yearly_mileage = 15_000
+  years_old = Time.current.year - year
+  mileage = rand(1_000..(max_yearly_mileage * years_old + 1_000))
+
+  # Format mileage with commas
+  formatted_mileage = mileage.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+
+  # Calculate price based on mileage, year, and model range
+  base_price = rand(model_data[:price_range][0]..model_data[:price_range][1])
+  mileage_factor = 1 - (mileage.to_f / (max_yearly_mileage * 10))
+  year_factor = (year - model_data[:years].first) / 5.0
+  price = (base_price * (1 + year_factor) * mileage_factor).round(-3)
+
+  # Create detailed description
+  description = model_data[:description_template] % {
+    color: color_name,
+    year: year,
+    engine_specs: "Technical Specifications:",
+    engine_type: engine_type,
+    fuel_type: fuel_type,
+    mileage: formatted_mileage,
+    engine_power: engine_power,
+    transmission: transmission
+  }
 
   # Generate proper image URL with correct make/model
   image_url = "https://cdn.imagin.studio/getimage?" + [
@@ -138,8 +161,7 @@ puts "Total cars in database: #{total_count}"
 puts "\nSample of cars created:"
 Car.order("RANDOM()").limit(5).each do |car|
   puts "- #{car.year} #{car.make} #{car.model}"
-  puts "  Description: #{car.description}"
-  puts "  Price: $#{car.price.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\\1,')}"
-  puts "  Image URL: #{car.image_url}"
+  puts "  #{car.description.split("\n").join("\n  ")}"
+  puts "  Price: $#{car.price.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse}"
   puts ""
 end

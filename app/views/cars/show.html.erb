@@ -1,12 +1,66 @@
-<p style="color: green"><%= notice %></p>
+<div class="container mt-4">
+  <% if notice %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= notice %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
 
-<%= render @car %>
+  <div class="card">
+    <div class="row g-0">
+      <div class="col-md-6">
+        <% if @car.image_url.present? %>
+          <%= image_tag @car.image_url, class: "img-fluid rounded-start", alt: "#{@car.make} #{@car.model}", style: "width: 100%; height: 400px; object-fit: cover;" %>
+        <% end %>
+      </div>
+      <div class="col-md-6">
+        <div class="card-body">
+          <h2 class="card-title mb-3"><%= @car.year %> <%= @car.make %> <%= @car.model %></h2>
+          <h3 class="text-success mb-4">$<%= number_with_delimiter(@car.price) %></h3>
 
-abke<%= button_to "Add to Cart", cart_items_path(car_id: @car.id), method: :post, class: "btn btn-success", form: { style: 'margin: 16px 0;' } %>
+          <% specs = @car.description.split("\n") %>
 
-<div>
-  <%= link_to "Edit this car", edit_car_path(@car) %> |
-  <%= link_to "Back to cars", cars_path %>
+          <!-- Basic Info -->
+          <p class="card-text"><%= specs.first %></p>
 
-  <%= button_to "Destroy this car", @car, method: :delete %>
+          <!-- Technical Specifications -->
+          <div class="mt-4">
+            <h4 class="mb-3">Technical Specifications</h4>
+            <table class="table table-striped">
+              <tbody>
+                <% specs[2..5].each do |spec| %>
+                  <% if spec.include?(':') %>
+                    <% key, value = spec.split(':', 2) %>
+                    <tr>
+                      <th style="width: 30%;"><%= key %></th>
+                      <td><%= value.strip %></td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Features -->
+          <div class="mt-4">
+            <h4 class="mb-3">Features</h4>
+            <p class="card-text"><%= specs.last %></p>
+          </div>
+
+          <div class="d-grid gap-3 mt-4">
+            <%= button_to cart_items_path(car_id: @car.id),
+                method: :post,
+                class: "btn btn-primary btn-lg",
+                form: { class: 'd-grid' } do %>
+              <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+            <% end %>
+
+            <%= link_to cars_path, class: "btn btn-outline-secondary" do %>
+              <i class="fas fa-arrow-left me-2"></i>Back to Cars
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
